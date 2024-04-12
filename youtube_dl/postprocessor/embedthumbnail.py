@@ -11,6 +11,7 @@ from ..utils import (
     check_executable,
     encodeArgument,
     encodeFilename,
+    is_outdated_version,
     PostProcessingError,
     prepend_extension,
     process_communicate_or_kill,
