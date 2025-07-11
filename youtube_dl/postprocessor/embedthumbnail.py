@@ -71,7 +71,7 @@ class EmbedThumbnailPP(FFmpegPostProcessor):
             os.rename(encodeFilename(thumbnail_filename), encodeFilename(escaped_thumbnail_filename))
             escaped_thumbnail_jpg_filename = replace_extension(escaped_thumbnail_filename, 'jpg')
             self._downloader.to_screen('[ffmpeg] Converting thumbnail "%s" to JPEG' % escaped_thumbnail_filename)
-            self.run_ffmpeg(escaped_thumbnail_filename, escaped_thumbnail_jpg_filename, ['-bsf:v', 'mjpeg2jpeg'])
+            self.run_ffmpeg(escaped_thumbnail_filename, escaped_thumbnail_jpg_filename, ['-qmin', '1', '-q:v', '1', '-bsf:v', 'mjpeg2jpeg'])
             os.remove(encodeFilename(escaped_thumbnail_filename))
             thumbnail_jpg_filename = replace_extension(thumbnail_filename, 'jpg')
             # Rename back to unescaped for further processing
