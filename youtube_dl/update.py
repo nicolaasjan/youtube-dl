@@ -17,7 +17,7 @@ from .utils import encode_compat_str
 
 from .version import __version__
 
-REPO = 'nicolaasjan/yt-dlp'
+REPO = 'nicolaasjan/youtube-dl'
 
 
 def rsa_verify(message, signature, key):
