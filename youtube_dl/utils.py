@@ -96,7 +96,7 @@ def register_socks_protocols():
 # Unfavoured alias
 compiled_regex_type = compat_re_Pattern
 
-
+def random_user_agent():
     _USER_AGENT_TPL = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/%s Safari/537.36'
     _CHROME_VERSIONS = (
         '90.0.4430.212',
