@@ -97,17 +97,8 @@ def register_socks_protocols():
 compiled_regex_type = compat_re_Pattern
 
 def random_user_agent():
-    _USER_AGENT_TPL = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/%s Safari/537.36'
-    _CHROME_VERSIONS = (
-        '132.0.0.0',
-        '133.0.0.0',
-        '134.0.0.0',
-        '135.0.0.0',
-        '136.0.0.0',
-        '137.0.0.0',
-        '138.0.0.0',
-    )
-    return _USER_AGENT_TPL % random.choice(_CHROME_VERSIONS)
+    return ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+            'Chrome/{0}.0.0.0 Safari/537.36'.format(random.randint(130, 138)))
 
 
 std_headers = {
