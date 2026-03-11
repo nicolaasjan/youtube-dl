@@ -95,11 +95,11 @@ class YoutubeBaseInfoExtractor(InfoExtractor):
             'INNERTUBE_CONTEXT': {
                 'client': {
                     'clientName': 'ANDROID_VR',
-                    'clientVersion': '1.62.27',
+                    'clientVersion': '1.65.10',
                     'deviceMake': 'Oculus',
                     'deviceModel': 'Quest 3',
                     'androidSdkVersion': 32,
-                    'userAgent': 'com.google.android.apps.youtube.vr.oculus/1.62.27 (Linux; U; Android 12L; eureka-user Build/SQ3A.220605.009.A1) gzip',
+                    'userAgent': 'com.google.android.apps.youtube.vr.oculus/1.65.10 (Linux; U; Android 12L; eureka-user Build/SQ3A.220605.009.A1) gzip',
                     'osName': 'Android',
                     'osVersion': '12L',
                 },
