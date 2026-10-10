@@ -102,10 +102,11 @@ class YoutubeBaseInfoExtractor(InfoExtractor):
                     'osVersion': '26.5.23O471',
                 },
             },
-        'INNERTUBE_CONTEXT_CLIENT_NAME': 101,
-        'REQUIRE_JS_PLAYER': False,
+            'INNERTUBE_CONTEXT_CLIENT_NAME': 101,
+            'REQUIRE_JS_PLAYER': False,
+            'WITH_COOKIES': False,
         }),
-        # thx yt-dlp/yt-dlp#15726
+        # Doesn't require a PoToken for some reason: thx yt-dlp/yt-dlp#14693
         ('android_vr', {
             'INNERTUBE_CONTEXT': {
                 'client': {
