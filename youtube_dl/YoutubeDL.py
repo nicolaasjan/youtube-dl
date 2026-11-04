@@ -701,6 +701,18 @@ class YoutubeDL(object):
         except UnicodeEncodeError:
             self.to_screen('[download] The file has already been downloaded')
 
+    def raise_no_formats(self, info, forced=False, **kw_msg):
+        msg = kw_msg.get('msg')
+
+        has_drm = info.get('_has_drm')
+        ignored, expected = self.params.get('ignore_no_formats_error'), bool(msg)
+        msg = msg or (has_drm and 'This video is DRM protected') or 'No video formats found!'
+        if forced or not ignored:
+            raise ExtractorError(msg, video_id=info.get('id') or self.get_temp_id(info), ie=info['extractor'],
+                                 expected=not forced and (has_drm or ignored or expected))
+        else:
+            self.report_warning(msg)
+
     def prepare_filename(self, info_dict):
         """Generate the output filename."""
         try:
@@ -1645,10 +1657,11 @@ class YoutubeDL(object):
     def process_video_result(self, info_dict, download=True):
         assert info_dict.get('_type', 'video') == 'video'
 
-        if 'id' not in info_dict:
-            raise ExtractorError('Missing "id" field in extractor result')
+        if not info_dict.get('id'):
+            raise ExtractorError('% "id" field in extractor result' % (
+                ('Invalid' if 'id' in info_dict else 'Missing'),))
         if 'title' not in info_dict:
-            raise ExtractorError('Missing "title" field in extractor result')
+            self.raise_no_formats(info_dict, msg='Missing "title" field in extractor result', forced=True)
 
         def report_force_conversion(field, field_not, conversion):
             self.report_warning(
@@ -1756,7 +1769,7 @@ class YoutubeDL(object):
         formats = list(filter(is_wellformed, formats or []))
 
         if not formats:
-            raise ExtractorError('No video formats found!')
+            self.raise_no_formats(info_dict)
 
         formats_dict = {}
 
@@ -1855,8 +1868,7 @@ class YoutubeDL(object):
 
         formats_to_download = list(format_selector(ctx))
         if not formats_to_download:
-            raise ExtractorError('requested format not available',
-                                 expected=True)
+            self.raise_no_formats(info_dict, msg='requested format not available')
 
         if download:
             if len(formats_to_download) > 1:
