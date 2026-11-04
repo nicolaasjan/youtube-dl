@@ -11,6 +11,7 @@ from ..utils import (
     check_executable,
     encodeArgument,
     encodeFilename,
+    is_outdated_version,
     PostProcessingError,
     prepend_extension,
     process_communicate_or_kill,
@@ -70,7 +71,7 @@ class EmbedThumbnailPP(FFmpegPostProcessor):
             os.rename(encodeFilename(thumbnail_filename), encodeFilename(escaped_thumbnail_filename))
             escaped_thumbnail_jpg_filename = replace_extension(escaped_thumbnail_filename, 'jpg')
             self._downloader.to_screen('[ffmpeg] Converting thumbnail "%s" to JPEG' % escaped_thumbnail_filename)
-            self.run_ffmpeg(escaped_thumbnail_filename, escaped_thumbnail_jpg_filename, ['-bsf:v', 'mjpeg2jpeg'])
+            self.run_ffmpeg(escaped_thumbnail_filename, escaped_thumbnail_jpg_filename, ['-qmin', '1', '-q:v', '1', '-pix_fmt', 'yuv444p', '-bsf:v', 'mjpeg2jpeg'])
             os.remove(encodeFilename(escaped_thumbnail_filename))
             thumbnail_jpg_filename = replace_extension(thumbnail_filename, 'jpg')
             # Rename back to unescaped for further processing
@@ -92,6 +93,28 @@ class EmbedThumbnailPP(FFmpegPostProcessor):
             os.rename(encodeFilename(temp_filename), encodeFilename(filename))
 
         elif info['ext'] in ['m4a', 'mp4']:
+            # use ffmpeg if the version supports embedding thumbnails
+            if self.basename == 'ffmpeg' and not is_outdated_version(self._lavf_version.get('build'), '58.12.100', False):  # ffmpeg >= 4.0
+                if info['ext'] == 'm4a':
+                    disposition = 0
+                else:
+                    disposition = 1
+                options = [
+                    '-c', 'copy', '-map', '0', '-map', '1',
+                    '-disposition:v:%s' % disposition,
+                    'attached_pic'
+                ]
+                self._downloader.to_screen('[ffmpeg] Adding thumbnail to "%s"' % filename)
+
+                self.run_ffmpeg_multiple_files([filename, thumbnail_filename], temp_filename, options)
+
+                if not self._already_have_thumbnail:
+                    os.remove(encodeFilename(thumbnail_filename))
+                os.remove(encodeFilename(filename))
+                os.rename(encodeFilename(temp_filename), encodeFilename(filename))
+
+                return [], info
+
             atomicparsley = next((x
                                   for x in ['AtomicParsley', 'atomicparsley']
                                   if check_executable(x, ['-v'])), None)
